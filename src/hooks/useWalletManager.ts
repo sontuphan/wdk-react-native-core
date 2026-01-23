@@ -354,6 +354,8 @@ export function useWalletManager(
           })
         }
       } catch (err) {
+        console.log('ERROR HERE!!!')
+        console.trace(err)
         const errorMessage = err instanceof Error ? err.message : String(err)
         const errorObj = err instanceof Error ? err : new Error(String(err))
         logError('Failed to initialize wallet:', err)
