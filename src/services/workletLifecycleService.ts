@@ -153,9 +153,11 @@ export class WorkletLifecycleService {
 
       const hrpcInstance = new HRPC(IPC)
 
+      console.log(0)
       const result = await hrpcInstance.workletStart({
         config: JSON.stringify(networkConfigs),
       })
+      console.log(1)
 
       store.setState({
         worklet,
@@ -168,6 +170,8 @@ export class WorkletLifecycleService {
         error: null,
       })
     } catch (error) {
+      console.log('ERROR HERE!!!')
+      console.trace(error)
       this.handleErrorWithStateUpdate(
         error,
         'startWorklet',

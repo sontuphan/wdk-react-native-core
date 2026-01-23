@@ -217,13 +217,11 @@ export function useWalletManager(
    */
   const initializeWallet = useCallback(
     async (options: { createNew?: boolean; walletId?: string } = {}) => {
-      console.log(1)
       setError(null)
       const targetWalletId = options.walletId ?? walletId
       const walletStore = getWalletStore()
       const effectiveNetworkConfigs = getNetworkConfigs()
 
-      console.log(2)
       try {
         // Check if wallet is already ready before attempting to initialize
         // This prevents unnecessary initialization calls when the wallet is already loaded
@@ -241,7 +239,6 @@ export function useWalletManager(
           }
         }
 
-        console.log(3)
         // Update loading state in store (single source of truth)
         if (targetWalletId) {
           walletStore.setState((prev) =>
@@ -253,13 +250,11 @@ export function useWalletManager(
           )
         }
 
-        console.log(4)
         await WalletSetupService.initializeWallet(effectiveNetworkConfigs, {
           ...options,
           walletId: targetWalletId,
         })
 
-        console.log(5)
         // Mark as ready on success
         // Wallet is ready when initializeWDK() completes successfully, even if addresses don't exist yet
         // (Addresses are lazy-loaded when getAddress() is called)
@@ -282,7 +277,6 @@ export function useWalletManager(
                 currentState.type === 'checking'
               ) {
                 // Also set activeWalletId to prevent WdkAppProvider from resetting state
-                console.log(6)
                 return produce(
                   updateWalletLoadingState(prev, {
                     type: 'ready',
@@ -306,7 +300,6 @@ export function useWalletManager(
               currentState.type === 'checking'
             ) {
               // Also set activeWalletId to prevent WdkAppProvider from resetting state
-              console.log(7)
               return produce(
                 updateWalletLoadingState(prev, {
                   type: 'ready',
@@ -329,14 +322,12 @@ export function useWalletManager(
                 },
               )
               // First transition: not_loaded -> loading
-              console.log(8)
               const loadingStateUpdate = updateWalletLoadingState(prev, {
                 type: 'loading',
                 identifier: targetWalletId,
                 walletExists: true,
               })
               // Second transition: loading -> ready (using the updated state)
-              console.log(9)
               const readyStateUpdate = updateWalletLoadingState(
                 loadingStateUpdate,
                 {
@@ -345,7 +336,6 @@ export function useWalletManager(
                 },
               )
               // Also set activeWalletId to prevent WdkAppProvider from resetting state
-              console.log(10)
               return produce(readyStateUpdate, (state) => {
                 state.activeWalletId = targetWalletId
               })
@@ -364,8 +354,6 @@ export function useWalletManager(
           })
         }
       } catch (err) {
-        console.log('ERROR HERE!!!')
-        console.trace(err)
         const errorMessage = err instanceof Error ? err.message : String(err)
         const errorObj = err instanceof Error ? err : new Error(String(err))
         logError('Failed to initialize wallet:', err)
