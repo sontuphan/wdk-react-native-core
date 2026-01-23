@@ -1,6 +1,6 @@
 /**
  * Zod Schemas for Runtime Validation
- * 
+ *
  * Provides Zod schemas for all WDK types to replace manual if/else type guards.
  * These schemas provide better error messages and are easier to maintain.
  */
@@ -11,20 +11,29 @@ import { z } from 'zod'
  * Ethereum address schema (0x followed by 40 hex characters)
  */
 export const ethereumAddressSchema = z.string().regex(/^0x[a-fA-F0-9]{40}$/, {
-  message: 'Must be a valid Ethereum address (0x followed by 40 hex characters)',
+  message:
+    'Must be a valid Ethereum address (0x followed by 40 hex characters)',
 })
 
 /**
  * Spark address schema (Bech32 format: spark1/sparkt1/sparkrt1 followed by base32 characters)
  */
-export const sparkAddressSchema = z.string().regex(/^spark(1|t1|rt1|test1)[a-z0-9]+$/, {
-  message: 'Must be a valid Spark address (spark1/sparkt1/sparkrt1 followed by base32 characters)',
-}).min(14).max(90)
+export const sparkAddressSchema = z
+  .string()
+  .regex(/^spark(1|t1|rt1|test1)[a-z0-9]+$/, {
+    message:
+      'Must be a valid Spark address (spark1/sparkt1/sparkrt1 followed by base32 characters)',
+  })
+  .min(14)
+  .max(90)
 
 /**
  * Address schema (Ethereum or Spark)
  */
-export const addressSchema = z.union([ethereumAddressSchema, sparkAddressSchema])
+export const addressSchema = z.union([
+  ethereumAddressSchema,
+  sparkAddressSchema,
+])
 
 /**
  * Network configuration schema
@@ -32,7 +41,7 @@ export const addressSchema = z.union([ethereumAddressSchema, sparkAddressSchema]
 export const networkConfigSchema = z.object({
   chainId: z.number().int().positive(),
   blockchain: z.string().min(1),
-  provider: z.string().min(1).optional(),
+  provider: z.union([z.string().min(1), z.array(z.string().min(1))]).optional(),
   bundlerUrl: z.string().min(1).optional(),
   paymasterUrl: z.string().min(1).optional(),
   paymasterAddress: ethereumAddressSchema.optional(),
@@ -43,14 +52,17 @@ export const networkConfigSchema = z.object({
 /**
  * Network configurations schema
  */
-export const networkConfigsSchema = z.record(
-  z.string().regex(/^[a-zA-Z0-9_-]+$/, {
-    message: 'Network name must contain only alphanumeric characters, hyphens, and underscores',
-  }),
-  networkConfigSchema
-).refine((configs) => Object.keys(configs).length > 0, {
-  message: 'NetworkConfigs must contain at least one network',
-})
+export const networkConfigsSchema = z
+  .record(
+    z.string().regex(/^[a-zA-Z0-9_-]+$/, {
+      message:
+        'Network name must contain only alphanumeric characters, hyphens, and underscores',
+    }),
+    networkConfigSchema,
+  )
+  .refine((configs) => Object.keys(configs).length > 0, {
+    message: 'NetworkConfigs must contain at least one network',
+  })
 
 /**
  * Token configuration schema
@@ -73,12 +85,11 @@ export const networkTokensSchema = z.object({
 /**
  * Token configurations schema
  */
-export const tokenConfigsSchema = z.record(
-  z.string().min(1),
-  networkTokensSchema
-).refine((configs) => Object.keys(configs).length > 0, {
-  message: 'TokenConfigs must contain at least one network',
-})
+export const tokenConfigsSchema = z
+  .record(z.string().min(1), networkTokensSchema)
+  .refine((configs) => Object.keys(configs).length > 0, {
+    message: 'TokenConfigs must contain at least one network',
+  })
 
 /**
  * Account index schema
@@ -88,9 +99,13 @@ export const accountIndexSchema = z.number().int().nonnegative()
 /**
  * Network name schema
  */
-export const networkNameSchema = z.string().regex(/^[a-zA-Z0-9_-]+$/, {
-  message: 'Network name must contain only alphanumeric characters, hyphens, and underscores',
-}).min(1)
+export const networkNameSchema = z
+  .string()
+  .regex(/^[a-zA-Z0-9_-]+$/, {
+    message:
+      'Network name must contain only alphanumeric characters, hyphens, and underscores',
+  })
+  .min(1)
 
 /**
  * Balance string schema (valid number string)
@@ -113,8 +128,8 @@ export const walletAddressesSchema = z.record(
       }
       return num
     }),
-    addressSchema
-  )
+    addressSchema,
+  ),
 )
 
 /**
@@ -131,8 +146,8 @@ export const walletBalancesSchema = z.record(
       }
       return num
     }),
-    z.record(z.string(), balanceStringSchema)
-  )
+    z.record(z.string(), balanceStringSchema),
+  ),
 )
 
 /**
@@ -187,4 +202,3 @@ export const accountMethodResponseSchema = z.union([
   z.string(), // For addresses
   z.object({}).passthrough(), // For other responses (objects)
 ])
-

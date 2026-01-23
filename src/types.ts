@@ -1,12 +1,12 @@
 /**
  * Core Type Definitions
- * 
+ *
  * All network, token, and wallet type definitions for the WDK React Native Core library.
  */
 
 /**
  * Network Configuration
- * 
+ *
  * Defines the configuration for a blockchain network.
  */
 export interface NetworkConfig {
@@ -15,7 +15,7 @@ export interface NetworkConfig {
   /** Blockchain name (e.g., "ethereum", "polygon") */
   blockchain: string
   /** Optional RPC provider URL */
-  provider?: string
+  provider?: string | string[]
   /** Optional bundler URL for account abstraction */
   bundlerUrl?: string
   /** Optional paymaster URL for account abstraction */
@@ -30,14 +30,14 @@ export interface NetworkConfig {
 
 /**
  * Network Configurations
- * 
+ *
  * Maps network names to their configurations.
  */
 export type NetworkConfigs = Record<string, NetworkConfig>
 
 /**
  * Token Configuration
- * 
+ *
  * Defines the configuration for a token (native or ERC20).
  */
 export interface TokenConfig {
@@ -53,7 +53,7 @@ export interface TokenConfig {
 
 /**
  * Network Tokens
- * 
+ *
  * Defines the tokens available for a network (native + ERC20 tokens).
  */
 export interface NetworkTokens {
@@ -65,14 +65,14 @@ export interface NetworkTokens {
 
 /**
  * Token Configurations
- * 
+ *
  * Maps network names to their token configurations.
  */
 export type TokenConfigs = Record<string, NetworkTokens>
 
 /**
  * Wallet
- * 
+ *
  * Represents a wallet instance with metadata.
  */
 export interface Wallet {
@@ -90,7 +90,7 @@ export interface Wallet {
 
 /**
  * Wallet Addresses
- * 
+ *
  * Maps network -> accountIndex -> address
  * Structure: { [network]: { [accountIndex]: address } }
  */
@@ -98,7 +98,7 @@ export type WalletAddresses = Record<string, Record<number, string>>
 
 /**
  * Wallet Addresses by Wallet Identifier
- * 
+ *
  * Maps walletId -> network -> accountIndex -> address
  * Structure: { [walletId]: { [network]: { [accountIndex]: address } } }
  */
@@ -106,16 +106,19 @@ export type WalletAddressesByWallet = Record<string, WalletAddresses>
 
 /**
  * Wallet Balances
- * 
+ *
  * Maps network -> accountIndex -> tokenAddress -> balance
  * Structure: { [network]: { [accountIndex]: { [tokenAddress]: balance } } }
  * Note: balance is stored as a string to handle BigInt values
  */
-export type WalletBalances = Record<string, Record<number, Record<string, string>>>
+export type WalletBalances = Record<
+  string,
+  Record<number, Record<string, string>>
+>
 
 /**
  * Wallet Balances by Wallet Identifier
- * 
+ *
  * Maps walletId -> network -> accountIndex -> tokenAddress -> balance
  * Structure: { [walletId]: { [network]: { [accountIndex]: { [tokenAddress]: balance } } } }
  */
@@ -123,7 +126,7 @@ export type WalletBalancesByWallet = Record<string, WalletBalances>
 
 /**
  * Balance Loading States
- * 
+ *
  * Maps "network-accountIndex-tokenAddress" -> boolean
  * Used to track which balances are currently being fetched.
  */
@@ -131,7 +134,7 @@ export type BalanceLoadingStates = Record<string, boolean>
 
 /**
  * Balance Fetch Result
- * 
+ *
  * Result of a balance fetch operation.
  */
 export interface BalanceFetchResult {
@@ -151,7 +154,7 @@ export interface BalanceFetchResult {
 
 /**
  * Token Config Provider
- * 
+ *
  * Either a TokenConfigs object or a function that returns TokenConfigs.
  * Allows for dynamic token configuration.
  */
@@ -159,7 +162,7 @@ export type TokenConfigProvider = TokenConfigs | (() => TokenConfigs)
 
 /**
  * Token Helpers
- * 
+ *
  * Helper functions for working with token configurations.
  */
 export interface TokenHelpers {
@@ -171,7 +174,7 @@ export interface TokenHelpers {
 
 /**
  * Wallet Store Interface
- * 
+ *
  * Interface for wallet store implementations that provide account methods
  * and wallet initialization status.
  */
@@ -181,7 +184,7 @@ export interface WalletStore {
     network: string,
     accountIndex: number,
     methodName: string,
-    args?: unknown
+    args?: unknown,
   ) => Promise<T>
   /** Check if the wallet is initialized */
   isWalletInitialized: () => boolean
