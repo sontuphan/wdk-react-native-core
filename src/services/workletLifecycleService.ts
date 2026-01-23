@@ -264,8 +264,6 @@ export class WorkletLifecycleService {
         error: null,
       })
     } catch (error) {
-      console.log('ERROR HERE in initializeWDK!!!')
-      console.trace(error)
       this.handleErrorWithStateUpdate(
         error,
         'initializeWDK',
