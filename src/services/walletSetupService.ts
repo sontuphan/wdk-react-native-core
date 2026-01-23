@@ -389,12 +389,10 @@ export class WalletSetupService {
   ): Promise<void> {
     const store = getWorkletStore()
 
-    console.log(1)
     if (!store.getState().isWorkletStarted) {
       await WorkletLifecycleService.startWorklet(networkConfigs)
     }
 
-    console.log(2)
     await WorkletLifecycleService.initializeWDK(credentials)
   }
 

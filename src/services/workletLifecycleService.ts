@@ -153,11 +153,9 @@ export class WorkletLifecycleService {
 
       const hrpcInstance = new HRPC(IPC)
 
-      console.log(1.1)
       const result = await hrpcInstance.workletStart({
         config: JSON.stringify(networkConfigs),
       })
-      console.log(1.2)
 
       store.setState({
         worklet,
@@ -170,8 +168,6 @@ export class WorkletLifecycleService {
         error: null,
       })
     } catch (error) {
-      console.log('ERROR HERE in startWorklet!!!')
-      console.trace(error)
       this.handleErrorWithStateUpdate(
         error,
         'startWorklet',
@@ -249,13 +245,11 @@ export class WorkletLifecycleService {
         )
       }
       const extendedHrpc = asExtendedHRPC(currentState.hrpc)
-      console.log(2.1)
       const result = await extendedHrpc.initializeWDK({
         encryptionKey: options.encryptionKey,
         encryptedSeed: options.encryptedSeed,
         config: JSON.stringify(currentState.networkConfigs || {}),
       })
-      console.log(2.2)
 
       // NEVER store seed phrase
       // Extract status from result
